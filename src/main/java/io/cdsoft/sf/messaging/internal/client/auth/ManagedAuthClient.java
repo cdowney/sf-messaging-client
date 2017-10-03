@@ -27,9 +27,9 @@ public class ManagedAuthClient implements ManagedClient {
 
     private AuthResponse authResponse;
 
-    public ManagedAuthClient(ConnectionConfig config, ManagedHttpClient jettyHttpClient) {
+    public ManagedAuthClient(ConnectionConfig config, ManagedHttpClient managedHttpClient) {
         this.config = config;
-        this.client = jettyHttpClient.getHttpClient();
+        this.client = managedHttpClient.getHttpClient();
     }
 
     @Override
