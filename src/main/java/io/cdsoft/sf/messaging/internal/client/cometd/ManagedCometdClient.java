@@ -88,7 +88,7 @@ public class ManagedCometdClient implements ManagedClient {
         }
 
         LOG.info("Subscribing to channel: {}", subscription.getChannelName());
-        REPLAY_EXTENSION.addChannelReplayId(subscription.getTopic(), subscription.getReplayFrom());
+        REPLAY_EXTENSION.addOrUpdateChannelReplayId(subscription.getTopic(), subscription.getReplayFrom());
 
         ClientSessionChannel channel = bayeuxClient.getChannel(subscription.getChannelName());
         EventConsumer<?> consumer = subscription.getConsumer();
@@ -96,6 +96,7 @@ public class ManagedCometdClient implements ManagedClient {
         channel.subscribe(
                 // On message listener
                 (c, message) -> {
+                    LOG.trace("Subscription-message [{}]: {}", c.getChannelId(), message);
                     if (consumer instanceof JsonEventConsumer) {
                         ((JsonEventConsumer) consumer).accept(message.getJSON());
                     } else if (consumer instanceof MapEventConsumer) {
@@ -191,11 +192,15 @@ public class ManagedCometdClient implements ManagedClient {
     }
 
     private synchronized void resubscribe() {
-        LOG.debug("Refreshing subscriptions to channels on reconnect");
+        LOG.trace("Refreshing subscriptions to channels on reconnect");
 
         for (Map.Entry<String, Subscription> entry : subscriptions.entrySet()) {
-            // TODO: unsubscribe?
-            addSubscription(entry.getValue());
+            Subscription subscription = entry.getValue();
+            ClientSessionChannel channel = bayeuxClient.getChannel(subscription.getChannelName());
+            if (channel.getSubscribers().size() == 0) {
+                LOG.debug("Re-subscribing to channel: [{}] because no subscribers exist.", subscription.getChannelName());
+                addSubscription(subscription);
+            }
         }
     }
 

@@ -4,6 +4,8 @@ import org.cometd.bayeux.Channel;
 import org.cometd.bayeux.Message;
 import org.cometd.bayeux.client.ClientSession;
 import org.cometd.bayeux.client.ClientSession.Extension.Adapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,17 +13,30 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ReplayExtension extends Adapter {
+    private static final Logger LOG = LoggerFactory.getLogger(ReplayExtension.class);
+
     private static final String EXTENSION_NAME = "replay";
+    private static final String EVENT_NAME = "event";
+    private static final String REPLAY_ID_NAME = "replayId";
     private final ConcurrentMap<String, Long> dataMap = new ConcurrentHashMap<>();
     private final AtomicBoolean supported = new AtomicBoolean();
 
-    public void addChannelReplayId(final String channelName, final long replayId) {
-        dataMap.put(channelName, replayId);
+    public void addOrUpdateChannelReplayId(final String channelName, final long replayId) {
+        dataMap.merge(channelName, replayId, (a, b) -> Math.max(b, a));
+        LOG.debug("Updated replayId in replay extension for channel [{}] to: {}", channelName, dataMap.get(channelName));
+    }
+
+    public void removeChannelReplayId(final String channelName) {
+        dataMap.remove(channelName);
     }
 
     @Override
     public boolean rcv(ClientSession session, Message.Mutable message) {
-        final Object value = message.get(EXTENSION_NAME);
+        @SuppressWarnings("unchecked") final Map<String, Object> event = (Map<String, Object>) message.getDataAsMap(true).get(EVENT_NAME);
+        Object value = null;
+        if (event != null) {
+            value = event.get(REPLAY_ID_NAME);
+        }
 
         final Long replayId;
         if (value instanceof Long) {
@@ -34,6 +49,7 @@ public class ReplayExtension extends Adapter {
 
         if (this.supported.get() && replayId != null) {
             try {
+                LOG.debug("Updating replayId for {} to {}", message.getChannel(), replayId);
                 dataMap.put(message.getChannel(), replayId);
             } catch (ClassCastException e) {
                 return false;
