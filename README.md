@@ -1,5 +1,7 @@
 # Salesforce Messaging Client
 
+[![Build Status](https://travis-ci.org/cdowney/sf-messaging-client.svg?branch=master)](https://travis-ci.org/cdowney/sf-messaging-client)
+
 Salesforce Messaging Client, is a java client used to subscribe to enterprise messages (Platform Events & Streaming API Push Topics).
 
 ##### Reference Links:
