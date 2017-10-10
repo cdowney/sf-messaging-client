@@ -98,9 +98,9 @@ public class Client {
 
 ## Consumers
 
-1. `MapEventConsumer`                   
+1. `MapEventConsumer`
     Implement this consumer to receive the payload from Salesforce in `Map<String, Object>` structured. This map is the JSON key to value map. Nested objects are themselves `Map<String, Object>`.
-   
+
     Example
     ```java
         MapEventConsumer consumer = message -> System.out.println("Received message on channel: " + message.get("channel");
@@ -114,7 +114,7 @@ public class Client {
     ```
 1. `JacksonPlatformEventConsumer`
     Extend and implement this abstract class to receive a strongly typed platform event parsed by Jackson.
-    
+
     Example
     ```java
         public class SomePayloadEventConsumer extends JacksonPlatformEventConsumer<SomePayload> {
@@ -130,15 +130,15 @@ public class Client {
             }
 
             @Override
-            public void handleException(String json, JavaType type) {
+            public void handleException(IOException exception, String json, JavaType type) {
                 log.warn("Failed to parse event tyep {} from {}", type.getTypeName(), json);
             }
         }
     ```
-    
+
 1. `JacksonPushTopicEventConsumer`
     Extend and implement this abstract class to receive a strongly typed push topic event parsed by Jackson.
-    
+
     Example
     ```java
         public class SomePayloadEventConsumer extends JacksonPushTopicEventConsumer<SomePayload> {
@@ -154,7 +154,7 @@ public class Client {
             }
 
             @Override
-            public void handleException(String json, JavaType type) {
+            public void handleException(IOException exception, String json, JavaType type) {
                 log.warn("Failed to parse event tyep {} from {}", type.getTypeName(), json);
             }
         }
