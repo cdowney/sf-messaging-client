@@ -96,6 +96,70 @@ public class Client {
 
 ```
 
+## Consumers
+
+1. `MapEventConsumer`                   
+    Implement this consumer to receive the payload from Salesforce in `Map<String, Object>` structured. This map is the JSON key to value map. Nested objects are themselves `Map<String, Object>`.
+   
+    Example
+    ```java
+        MapEventConsumer consumer = message -> System.out.println("Received message on channel: " + message.get("channel");
+    ```
+1. `JsonEventConsumer`
+    Implement this consumer to receive the raw JSON payload from Salesforce.
+
+    Example
+    ```java
+        JsonEventConsumer consumer = message -> System.out.println("Received message: " + message);
+    ```
+1. `JacksonPlatformEventConsumer`
+    Extend and implement this abstract class to receive a strongly typed platform event parsed by Jackson.
+    
+    Example
+    ```java
+        public class SomePayloadEventConsumer extends JacksonPlatformEventConsumer<SomePayload> {
+
+            public SomePayloadEventConsumer(ObjectMapper objectMapper) {
+                super(SomePayload.class, objectMapper);
+            }
+
+            @Override
+            public void handleEvent(PlatformEvent<SomePayload> event) {
+                SomePayload payload = event.getData().getPayload();
+                // Do something interesting with payload
+            }
+
+            @Override
+            public void handleException(String json, JavaType type) {
+                log.warn("Failed to parse event tyep {} from {}", type.getTypeName(), json);
+            }
+        }
+    ```
+    
+1. `JacksonPushTopicEventConsumer`
+    Extend and implement this abstract class to receive a strongly typed push topic event parsed by Jackson.
+    
+    Example
+    ```java
+        public class SomePayloadEventConsumer extends JacksonPushTopicEventConsumer<SomePayload> {
+
+            public SomePayloadEventConsumer(ObjectMapper objectMapper) {
+                super(SomePayload.class, objectMapper);
+            }
+
+            @Override
+            public void handleEvent(PushTopicEvent<SomePayload> event) {
+                SomePayload payload = event.getData().getSObject();
+                // Do something interesting with payload
+            }
+
+            @Override
+            public void handleException(String json, JavaType type) {
+                log.warn("Failed to parse event tyep {} from {}", type.getTypeName(), json);
+            }
+        }
+    ```
+
 ## Built With
 
 * [Maven](https://maven.apache.org/)
@@ -104,7 +168,7 @@ public class Client {
 
 ## Versioning
 
-Usse [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/cdowney/sf-messaging-client/tags). 
+Use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/cdowney/sf-messaging-client/tags). 
 
 
 ## License
