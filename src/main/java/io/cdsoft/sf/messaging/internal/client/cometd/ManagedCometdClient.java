@@ -3,6 +3,8 @@ package io.cdsoft.sf.messaging.internal.client.cometd;
 import io.cdsoft.sf.messaging.MessagingException;
 import io.cdsoft.sf.messaging.api.config.ConnectionConfig;
 import io.cdsoft.sf.messaging.api.consumer.EventConsumer;
+import io.cdsoft.sf.messaging.api.consumer.JacksonPlatformEventConsumer;
+import io.cdsoft.sf.messaging.api.consumer.JacksonPushTopicEventConsumer;
 import io.cdsoft.sf.messaging.api.consumer.JsonEventConsumer;
 import io.cdsoft.sf.messaging.api.consumer.MapEventConsumer;
 import io.cdsoft.sf.messaging.api.subscription.Subscription;
@@ -101,6 +103,10 @@ public class ManagedCometdClient implements ManagedClient {
                         ((JsonEventConsumer) consumer).accept(message.getJSON());
                     } else if (consumer instanceof MapEventConsumer) {
                         ((MapEventConsumer) consumer).accept(message.getDataAsMap());
+                    } else if (consumer instanceof JacksonPlatformEventConsumer) {
+                        ((JacksonPlatformEventConsumer) consumer).accept(message.getJSON());
+                    } else if (consumer instanceof JacksonPushTopicEventConsumer) {
+                        ((JacksonPushTopicEventConsumer) consumer).accept(message.getJSON());
                     }
                 },
                 // On subscription listener
