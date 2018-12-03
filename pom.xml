@@ -29,8 +29,8 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/cdowney/sf-messaging-client.git</connection>
-        <developerConnection>scm:git:git://github.com/cdowney/sf-messaging-client.git</developerConnection>
+        <connection>scm:git:https://github.com/cdowney/sf-messaging-client.git</connection>
+        <developerConnection>scm:git:https://github.com/cdowney/sf-messaging-client.git</developerConnection>
         <url>https://github.com/cdowney/sf-messaging-client</url>
     </scm>
 
