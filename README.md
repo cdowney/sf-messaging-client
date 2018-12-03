@@ -20,7 +20,7 @@ To include the client in your maven project, add the following dependency to you
 <dependency>
    <groupId>io.cdsoft</groupId>
    <artifactId>sf-messaging-client</artifactId>
-   <version>1.0.1</version>
+   <version>1.0.3</version>
 </dependency>
 ```
 
