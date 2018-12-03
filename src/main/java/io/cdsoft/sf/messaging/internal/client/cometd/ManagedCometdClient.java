@@ -90,7 +90,7 @@ public class ManagedCometdClient implements ManagedClient {
         }
 
         LOG.info("Subscribing to channel: {}", subscription.getChannelName());
-        REPLAY_EXTENSION.addOrUpdateChannelReplayId(subscription.getTopic(), subscription.getReplayFrom());
+        REPLAY_EXTENSION.addOrUpdateChannelReplayId(subscription.getChannelName(), subscription.getReplayFrom());
 
         ClientSessionChannel channel = bayeuxClient.getChannel(subscription.getChannelName());
         EventConsumer<?> consumer = subscription.getConsumer();
