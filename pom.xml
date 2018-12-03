@@ -36,7 +36,7 @@
 
     <properties>
         <cometd-java-client-version>3.1.2</cometd-java-client-version>
-        <jackson-verion>2.9.1</jackson-verion>
+        <jackson-verion>2.9.7</jackson-verion>
         <jetty9-version>9.4.5.v20170502</jetty9-version>
     </properties>
 
